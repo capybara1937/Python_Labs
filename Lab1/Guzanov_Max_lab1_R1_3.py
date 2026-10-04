@@ -157,7 +157,7 @@ def Task3():
             progress_bar = f'[{'#'*progress + '-'*(width - progress)}]'
             if num_process == num and progress == 25: e = '\n'
             else: e = '\r'
-            print(f'Task_{num_process} {progress_bar}', end = e, flush=True)
+            print(f'Task_{num_process} ({num_process}/{num}) {progress_bar} {progress*4:>4}%', end = e, flush=True)
             sleep(0.1)
     print('Все загрузки успешно выполнены')
 
@@ -187,12 +187,36 @@ def Task4():
 # допзадание (график y = x/3)
 @decorator
 def Dop_task():
-    for y in range(9, 0, -1):
-        line = ''
-        for x in range(1,31):
-            if abs(3*y - x) < 2: line += f"{get_bg_color(1,"Grey")}"
-            else: line += " "
-        print(line)
+    width = 29
+    height = 10
+    matrix = [[0 for _ in range(width)] for _ in range(height)]
+
+    for y in range(height):
+        x = 3 * y
+        x1, x2 = x-1, x+1
+        for i in [x, x1, x2]:
+            matrix[height - 1 - y][i] = 1
+
+
+
+    print('График y = x/3:')
+    for row_index, row in enumerate(matrix):
+        y = height - 1 - row_index
+        axis = '+' if y == 0 else '|'
+        line = ''.join(
+            axis if x == 0 else
+            '--' if y == 0 else
+            get_bg_color(2, 'Grey') if pixel else '  '
+            for x, pixel in enumerate(row)
+        )
+        print(f'{y:>2} {line}')
+
+    x_labels = [' '] * (width * 2)
+    for x in range(0, width, 3):
+        label = str(x)
+        x_labels[x * 2:x * 2 + len(label)] = label
+    print('   ' + ''.join(x_labels))
+
 
 if __name__ == '__main__':
 
