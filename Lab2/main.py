@@ -1,5 +1,7 @@
 from os import listdir, remove
 import xml.etree.ElementTree as ET
+from csv import DictReader
+from time import sleep
 
 
 def logic():
@@ -13,39 +15,35 @@ def logic():
     
 
     def ask_for_tasks():
-        ans1 = input('Какие задания вы хотите увидеть? (1,2,3,4): ')
+        ans1 = input('Какие задания вы хотите увидеть? (1,2,3,4,5): ')
         try:
             ans1 = [int(x) for x in ans1.split(',')]
         except Exception as e:
             print(f'Извините, я вас не понял. Произошла ошибка: {e}. Попробуйте еще раз.')
             return ask_for_tasks()
         return ans1
-
+    t = 1
     books = read_file()
-    dict = {1: (task1, [books]), 2: (task2, [books]), 3: (task3, [books]), 4: (task4, [])}
+    dict = {1: (task1, [books]), 2: (task2, [books]), 3: (task3, [books]), 4: (task4, []), 5: (extra_task1, [books]), 6: (extra_task2, [books])}
     res = ask_all()
     if res:
         for task, args in dict.values():
             task(*args)
+            sleep(t)
     else:
         tasks = ask_for_tasks()
         for task in tasks:
             func, args = dict[task][0], dict[task][1]
             func(*args)
+            sleep(t)
 
 
 def read_file(file_name:str = 'books.csv') -> list:
-    file = open(file_name, 'r')
-    names = file.readline().strip().split(';')
-    # print(names)
-    books = []
-    for line in file:
-        line = line.strip().split(';')
-        book = dict(zip(names, line))
-        books.append(book)
-    file.close()
-    return books
-
+    with open(file_name, mode = 'r') as file:
+        reader = DictReader(file, delimiter=';')
+        books = [book for book in reader]
+        return books
+        
 
 def task1(books:list[dict]):
     ans1 = len([book for book in books if len(book['Название']) > 30])
@@ -129,6 +127,26 @@ def task4(file_name:str = 'currency.xml'):
     for char_code, name in result.items():
         print(f'  {char_code}: {name}')
 
+
+def extra_task1(books:list[dict]):
+
+    list_tags = []
+    for book in books:
+        tags = book['Жанр книги'][1:].split('# ')
+        tags = [tag.strip() for tag in tags if tag.strip() != '']
+        list_tags.extend(tags)
+
+    list_tags = list(set(list_tags))
+    print(f'Вот список тегов: {", ".join(list_tags[:10])}... Всего тегов: {len(list_tags)}')
+
+
+def extra_task2(books:list[dict]):
+    for book in books:
+        book['Кол-во выдач'] = int(book['Кол-во выдач'])
+    books.sort(key = lambda x: x['Кол-во выдач'], reverse=True)
+    top20 = books[:20]
+    for book in top20:
+        print(book, end = '\n\n')
 
 
 if __name__ == "__main__":
