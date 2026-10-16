@@ -3,7 +3,8 @@ from PIL import Image, ImageTk
 from random import shuffle, choices
 from string import printable
 from tkinter import messagebox
-from time import sleep
+import pygame
+
 
 saved_number = 0
 
@@ -45,7 +46,7 @@ def app():
 
     def close():
         root.destroy()
-
+        pygame.mixer.music.stop()
 
     def action(key:str):
         my_button.destroy()
@@ -57,16 +58,19 @@ def app():
         exit_button.place(x=220,y=150)
         
 
-
+    pygame.init()
+    pygame.mixer.init()
+    pygame.mixer.music.load("brought-to-you-by-a-falling-bob-omb-by-0x10.mp3")
+    pygame.mixer.music.play(loops=-1)
 
     root = tk.Tk()
     root.title("Dota 2")
-    root.geometry("594x340")
+    root.geometry("594x340")    
 
     #картинка на заднем фоне
     image_path = "dota_bg.jpg" 
     pil_image = Image.open(image_path)
-    pil_image = pil_image.resize((594, 340), Image.Resampling.LANCZOS)
+    pil_image = pil_image.resize((594, 340))
     bg_image = ImageTk.PhotoImage(pil_image)
 
     bg_label = tk.Label(root, image=bg_image)
