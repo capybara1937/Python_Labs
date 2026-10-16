@@ -1,9 +1,9 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-from random import shuffle, choice, choices
+from random import shuffle, choices
 from string import printable
-
-
+from tkinter import messagebox
+from time import sleep
 
 saved_number = 0
 
@@ -20,8 +20,10 @@ def app():
                 generate_key(saved_number)
             else:
                 print("Введенное число не длины 6")
+                messagebox.showinfo(title="Число для генерации", message="Введите число длины 6")
         except ValueError:
             print("Введено не число")
+            messagebox.showerror(title="Ошибка", message='Введено не число')
 
     def generate_key(num:int):
         string = str(num)
@@ -40,11 +42,19 @@ def app():
         print(key)
         action(key)
 
+
+    def close():
+        root.destroy()
+
+
     def action(key:str):
         my_button.destroy()
         entry.destroy()
         label = tk.Label(root, text=f'Ваш сгенерированный ключ: {key}', font=('Arial', 15))
         label.pack(pady = 40)
+
+        exit_button = tk.Button(root, text="Закрыть приложение", command=close, font = ("Arial", 14))
+        exit_button.place(x=220,y=150)
         
 
 
